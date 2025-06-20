@@ -3,13 +3,6 @@
 import { useState } from 'react';
 import styles from './page.module.css';
 
-const directions = [
-  [-1, 0],
-  [0, -1],
-  [0, 1],
-  [1, 0],
-] as const;
-
 type CellType = 'wall' | 'path' | 'start' | 'goal';
 interface Cell {
   row: number;
@@ -17,8 +10,8 @@ interface Cell {
   type: CellType;
 }
 
-const MAZE_HEIGHT = 21; //迷路の高さ
-const MAZE_WIDTH = 21; //迷路の幅
+const MAZE_HEIGHT = 7; //迷路の高さ
+const MAZE_WIDTH = 7; //迷路の幅
 
 const createInitialGrid = (): Cell[][] => {
   const grid: Cell[][] = [];
@@ -39,15 +32,28 @@ const createInitialGrid = (): Cell[][] => {
 
 export default function Home() {
   const [grid, setGrid] = useState(() => createInitialGrid());
+  const clickHandler = () => {
+    console.log('迷路を生成ボタンがおされた！');
+    //ここにアルゴリズムを書いていく
+  };
+
+  const directions = [
+    [-1, 0],
+    [0, -1],
+    [0, 1],
+    [1, 0],
+  ] as const;
 
   return (
     <div className={styles.container}>
+      <button onClick={clickHandler}>迷路を生成</button>
       <div
         className={styles.bord}
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${MAZE_WIDTH}, 1fr)`,
-          gap: '1px',
+          gridTemplateRows: `repeat(${MAZE_HEIGHT}, 1fr)`,
+          gap: '25px',
         }}
       >
         {grid.map((row) =>
@@ -56,8 +62,8 @@ export default function Home() {
               key={`${cell.row}-${cell.col}`}
               style={{
                 backgroundColor: cell.type === 'wall' ? 'black' : 'white',
-                width: '20px',
-                height: '20px',
+                width: '30px',
+                height: '30px',
               }}
             />
           )),
