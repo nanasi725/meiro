@@ -32,10 +32,45 @@ const createInitialGrid = (): Cell[][] => {
 
 export default function Home() {
   const [grid, setGrid] = useState(() => createInitialGrid());
-  const clickHandler = () => {
-    console.log('迷路を生成ボタンがおされた！');
-    //ここにアルゴリズムを書いていく
-  };
+  const [pillarList, setPillarList] = useState<Cell[]>([]);
+  const handleGenerateMaze = () => {
+  // 1. 初期化処理
+  const newGrid = JSON.parse(JSON.stringify(grid));
+  const startRow = 1;
+  const startCol = 1;
+  newGrid[startRow][startCol].type = 'path';
+  const initialPillars: Cell[] = [];
+  directions.forEach(([dr, dc]) => {
+    const r = startRow + dr;
+    const c = startCol + dc;
+    if (r > 0 && r < MAZE_HEIGHT - 1 && c > 0 && c < MAZE_WIDTH - 1) {
+      initialPillars.push(newGrid[r][c]);
+    }
+  });
+  
+  // 最初のスタート地点だけを先に描画する
+  setGrid(newGrid);
+  
+  // --- ここからがループ処理の1ステップ目 ---
+  if (initialPillars.length > 0) {
+    // 候補リストからランダムに1つ選ぶ
+    const randomIndex = Math.floor(Math.random() * initialPillars.length);
+    const randomPillar = initialPillars[randomIndex];
+
+    // 選んだ柱を「道」に変える
+    // (まだ両隣のチェックはしていない仮の処理)
+    newGrid[randomPillar.row][randomPillar.col].type = 'path';
+
+    // 候補リストから、今使った柱を取り除く
+    const nextPillars = initialPillars.filter(
+      (p) => !(p.row === randomPillar.row && p.col === randomPillar.col)
+    );
+
+    // ★変更を画面に反映させる
+    setGrid(newGrid);
+    setPillarList(nextPillars); // pillarListも更新
+  }
+};
 
   const directions = [
     [-1, 0],
@@ -46,7 +81,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <button onClick={clickHandler}>迷路を生成</button>
+      <button onClick={handleGenerateMaze}>迷路を生成</button>
       <div
         className={styles.bord}
         style={{
