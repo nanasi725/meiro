@@ -13,20 +13,20 @@
   flex-wrap: wrap;
   width: 270px;
   height: 270px;
-  background-color:white;
+  background-color: white;
 }
 
-.row{
+.row {
   display: flex;
 }
 
-.path{
+.path {
   width: 30px;
   height: 30px;
   background-color: #fff;
 }
 
-.wall{
+.wall {
   width: 30px;
   height: 30px;
   background-color: #333;

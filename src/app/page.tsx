@@ -1,10 +1,9 @@
 'use client';
-import { useState } from "react";
-import styles from "./page.module.css";
+import styles from './page.module.css';
 
 export default function Home() {
   const board = [
-    ["S", 0, 0, 0, 0, 0, 0, 0, 0],
+    ['S', 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 0, 1, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 0, 1, 0],
@@ -12,7 +11,7 @@ export default function Home() {
     [0, 1, 0, 1, 0, 1, 0, 1, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, "G"],
+    [0, 0, 0, 0, 0, 0, 0, 0, 'G'],
   ];
 
   // 0が道、1が壁 Sがスタート Gがゴール
@@ -24,16 +23,16 @@ export default function Home() {
           <div key={rowIndex} className={styles.row}>
             {row.map((cell, colIndex) => {
               let cellStyle;
-              if (cell === "S") {
+              if (cell === 'S') {
                 cellStyle = styles.start; // "S"ならスタートのスタイル
-              } else if (cell === "G") {
-                cellStyle = styles.goal;  // "G"ならゴールのスタイル
+              } else if (cell === 'G') {
+                cellStyle = styles.goal; // "G"ならゴールのスタイル
               } else if (cell === 1) {
-                cellStyle = styles.wall;  // 1なら壁のスタイル
+                cellStyle = styles.wall; // 1なら壁のスタイル
               } else {
-                cellStyle = styles.path;  // それ以外（0）は道のスタイル
+                cellStyle = styles.path; // それ以外（0）は道のスタイル
               }
-               const cellContent = (cell === "S" || cell === "G") ? cell : "";
+              const cellContent = cell === 'S' || cell === 'G' ? cell : '';
 
               return (
                 <div key={colIndex} className={cellStyle}>
