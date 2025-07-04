@@ -40,17 +40,29 @@ export default function Home() {
   };
 
   const generateMaze = () => {
-    stopSolver(); // 実行中の探索を停止
-    setPlayer({ pos: null, dir: 'down' }); // プレイヤーの位置をリセット
+    stopSolver();
+    setPlayer({ pos: null, dir: 'down' });
 
-    const newBoard: (string | number)[][] = Array.from({ length: MAZE_HEIGHT }, () =>
-      Array(MAZE_WIDTH).fill(1)
-  );
+    // 1. まず、迷路の土台となる、すべてが壁(1)の盤面を用意します。
+    const newBoard: (string | number)[][] = [];
+    for (let y = 0; y < MAZE_HEIGHT; y++) {
+      const row: (string | number)[] = [];
+      for (let x = 0; x < MAZE_WIDTH; x++) {
+        row.push(1);
+      }
+      newBoard.push(row);
+    }
+
+    // --- ここから迷路の「内側」だけを生成します ---
+    
+    // 2. 内側に道(0)の基準点を格子状に作る
     for (let y = 1; y < MAZE_HEIGHT - 1; y += 2) {
       for (let x = 1; x < MAZE_WIDTH - 1; x += 2) {
         newBoard[y][x] = 0;
       }
     }
+
+    // 3. 道の基準点からランダムに壁を壊し、道を繋げる（棒倒し）
     for (let y = 1; y < MAZE_HEIGHT - 1; y += 2) {
       for (let x = 1; x < MAZE_WIDTH - 1; x += 2) {
         if (y === 1 && x === 1) continue;
@@ -58,7 +70,8 @@ export default function Home() {
         if (y > 1) directions.push('up');
         if (x > 1) directions.push('left');
         if (directions.length === 0) continue;
-        const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+        const randomDirection =
+          directions[Math.floor(Math.random() * directions.length)];
         if (randomDirection === 'up') {
           newBoard[y - 1][x] = 0;
         } else {
@@ -66,8 +79,12 @@ export default function Home() {
         }
       }
     }
+    
+    // 4. スタートとゴールを設置
     newBoard[1][1] = 'S';
     newBoard[MAZE_HEIGHT - 2][MAZE_WIDTH - 2] = 'G';
+    
+    // 5. 完成した新しい迷路で画面を更新
     setBoard(newBoard);
   };
 
@@ -87,7 +104,7 @@ export default function Home() {
     setPlayer({ pos: startPos, dir: 'down' });
 
     const intervalId = setInterval(() => {
-      setPlayer((currentPlayer) => moveStep(currentPlayer));
+      setPlayer(currentPlayer => moveStep(currentPlayer));
     }, 100);
     setSolverIntervalId(intervalId);
   };
@@ -112,31 +129,22 @@ export default function Home() {
     const currentDirIndex = directions.indexOf(currentPlayer.dir);
 
     const leftDir = directions[(currentDirIndex + 3) % 4];
-    let nextPos = {
-      y: currentPlayer.pos.y + vectors[leftDir].y,
-      x: currentPlayer.pos.x + vectors[leftDir].x,
-    };
+    let nextPos = { y: currentPlayer.pos.y + vectors[leftDir].y, x: currentPlayer.pos.x + vectors[leftDir].x };
     if (board[nextPos.y]?.[nextPos.x] !== 1) {
       return { pos: nextPos, dir: leftDir };
     }
 
-    nextPos = {
-      y: currentPlayer.pos.y + vectors[currentPlayer.dir].y,
-      x: currentPlayer.pos.x + vectors[currentPlayer.dir].x,
-    };
+    nextPos = { y: currentPlayer.pos.y + vectors[currentPlayer.dir].y, x: currentPlayer.pos.x + vectors[currentPlayer.dir].x };
     if (board[nextPos.y]?.[nextPos.x] !== 1) {
       return { pos: nextPos, dir: currentPlayer.dir };
     }
 
     const rightDir = directions[(currentDirIndex + 1) % 4];
-    nextPos = {
-      y: currentPlayer.pos.y + vectors[rightDir].y,
-      x: currentPlayer.pos.x + vectors[rightDir].x,
-    };
+    nextPos = { y: currentPlayer.pos.y + vectors[rightDir].y, x: currentPlayer.pos.x + vectors[rightDir].x };
     if (board[nextPos.y]?.[nextPos.x] !== 1) {
       return { pos: nextPos, dir: rightDir };
     }
-
+    
     const backDir = directions[(currentDirIndex + 2) % 4];
     return { pos: currentPlayer.pos, dir: backDir };
   };
@@ -148,7 +156,7 @@ export default function Home() {
           新しい迷路を生成
         </button>
         <button onClick={solveMaze} className={styles.button}>
-          解く
+          解く (左手法)
         </button>
       </div>
 
@@ -157,8 +165,10 @@ export default function Home() {
           <div key={rowIndex} className={styles.row}>
             {row.map((cell, colIndex) => {
               const isPlayerPosition =
-                player.pos && player.pos.y === rowIndex && player.pos.x === colIndex;
-
+                player.pos &&
+                player.pos.y === rowIndex &&
+                player.pos.x === colIndex;
+                
               let cellStyle;
               if (isPlayerPosition) {
                 cellStyle = styles.player;
