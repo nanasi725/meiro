@@ -10,10 +10,20 @@
 
 .board {
   display: flex;
-  flex-wrap: wrap;
-  width: 270px;
-  height: 270px;
+  flex-direction: column;
+  width: 450px;
+  height: 450px;
   background-color: white;
+}
+
+.button {
+  padding: 10px 20px; 
+  margin-bottom: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #fff; 
+  border: 3px solid #333;
+  border-radius: 5px;
 }
 
 .row {
@@ -50,4 +60,14 @@
   height: 30px;
   font-weight: bold;
   background-color: #ffcccb;
+}
+
+/* page.module.css に追記 */
+.player {
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  background-color: #3498db;
+  border: 3px solid #fff;
+  border-radius: 50%; /* 枠線を含めてサイズ計算 */
 }
