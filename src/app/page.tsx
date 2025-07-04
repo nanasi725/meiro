@@ -43,9 +43,9 @@ export default function Home() {
     stopSolver(); // 実行中の探索を停止
     setPlayer({ pos: null, dir: 'down' }); // プレイヤーの位置をリセット
 
-    const newBoard = Array.from({ length: MAZE_HEIGHT }, () =>
+    const newBoard: (string | number)[][] = Array.from({ length: MAZE_HEIGHT }, () =>
       Array(MAZE_WIDTH).fill(1)
-    );
+  );
     for (let y = 1; y < MAZE_HEIGHT - 1; y += 2) {
       for (let x = 1; x < MAZE_WIDTH - 1; x += 2) {
         newBoard[y][x] = 0;
@@ -58,8 +58,7 @@ export default function Home() {
         if (y > 1) directions.push('up');
         if (x > 1) directions.push('left');
         if (directions.length === 0) continue;
-        const randomDirection =
-          directions[Math.floor(Math.random() * directions.length)];
+        const randomDirection = directions[Math.floor(Math.random() * directions.length)];
         if (randomDirection === 'up') {
           newBoard[y - 1][x] = 0;
         } else {
@@ -88,7 +87,7 @@ export default function Home() {
     setPlayer({ pos: startPos, dir: 'down' });
 
     const intervalId = setInterval(() => {
-      setPlayer(currentPlayer => moveStep(currentPlayer));
+      setPlayer((currentPlayer) => moveStep(currentPlayer));
     }, 100);
     setSolverIntervalId(intervalId);
   };
@@ -113,22 +112,31 @@ export default function Home() {
     const currentDirIndex = directions.indexOf(currentPlayer.dir);
 
     const leftDir = directions[(currentDirIndex + 3) % 4];
-    let nextPos = { y: currentPlayer.pos.y + vectors[leftDir].y, x: currentPlayer.pos.x + vectors[leftDir].x };
+    let nextPos = {
+      y: currentPlayer.pos.y + vectors[leftDir].y,
+      x: currentPlayer.pos.x + vectors[leftDir].x,
+    };
     if (board[nextPos.y]?.[nextPos.x] !== 1) {
       return { pos: nextPos, dir: leftDir };
     }
 
-    nextPos = { y: currentPlayer.pos.y + vectors[currentPlayer.dir].y, x: currentPlayer.pos.x + vectors[currentPlayer.dir].x };
+    nextPos = {
+      y: currentPlayer.pos.y + vectors[currentPlayer.dir].y,
+      x: currentPlayer.pos.x + vectors[currentPlayer.dir].x,
+    };
     if (board[nextPos.y]?.[nextPos.x] !== 1) {
       return { pos: nextPos, dir: currentPlayer.dir };
     }
 
     const rightDir = directions[(currentDirIndex + 1) % 4];
-    nextPos = { y: currentPlayer.pos.y + vectors[rightDir].y, x: currentPlayer.pos.x + vectors[rightDir].x };
+    nextPos = {
+      y: currentPlayer.pos.y + vectors[rightDir].y,
+      x: currentPlayer.pos.x + vectors[rightDir].x,
+    };
     if (board[nextPos.y]?.[nextPos.x] !== 1) {
       return { pos: nextPos, dir: rightDir };
     }
-    
+
     const backDir = directions[(currentDirIndex + 2) % 4];
     return { pos: currentPlayer.pos, dir: backDir };
   };
@@ -140,7 +148,7 @@ export default function Home() {
           新しい迷路を生成
         </button>
         <button onClick={solveMaze} className={styles.button}>
-          解く 
+          解く
         </button>
       </div>
 
@@ -149,10 +157,8 @@ export default function Home() {
           <div key={rowIndex} className={styles.row}>
             {row.map((cell, colIndex) => {
               const isPlayerPosition =
-                player.pos &&
-                player.pos.y === rowIndex &&
-                player.pos.x === colIndex;
-                
+                player.pos && player.pos.y === rowIndex && player.pos.x === colIndex;
+
               let cellStyle;
               if (isPlayerPosition) {
                 cellStyle = styles.player;
